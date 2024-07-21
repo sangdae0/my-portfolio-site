@@ -1,0 +1,5 @@
+pm2 ls
+pm2 stop MyWebsite
+pm2 delete MyWebsite
+pm2 start main.js --name "MyWebsite"
+pm2 save

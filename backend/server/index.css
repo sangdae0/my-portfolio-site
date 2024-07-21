@@ -1,0 +1,25 @@
+li {
+	font-size: xx-large;
+	color: black;
+	font-family: "Verdana", serif;
+}
+
+.project_title {
+	font-family: "Verdana", serif;
+	color: black;
+	font-weight: bold;
+}
+
+h1 {
+	color: gray;
+	font-weight: bold;
+	text-align: center;
+	font-family: "Verdana", serif;
+	border-bottom-style: groove;
+	border-bottom-width: thin;
+}
+
+ul {
+	columns: 3;
+	list-style: none;
+}

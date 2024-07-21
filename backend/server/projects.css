@@ -1,0 +1,20 @@
+li {
+	line-height: 2.0;
+	color: black;
+	font-family: "Verdana", serif;
+}
+
+.project_title {
+	font-family: "Verdana", serif;
+	color: black;
+	font-weight: bold;
+}
+
+h1 {
+	color: gray;
+	font-weight: bold;
+	text-align: center;
+	font-family: "Verdana", serif;
+	border-bottom-style: groove;
+	border-bottom-width: thin;
+}

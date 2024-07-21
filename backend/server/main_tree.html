@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="shortcut icon" href="#">
+    <meta charset="utf-8"/>
+    <title>450 Renderer</title>
+  </head>
+  <body onload="main()">
+<p>
+* Description<br>
+A procedural tree generation tool by using L-system.<br>
+<br>
+<br>
+* How to use<br>
+Write rules in the text area below with referring "Settings" and "Syntaxes" section in the description.<br>
+You can test the tree generation by clicking "Gen from L system" button.<br>
+If the debug mode is enabled, then you can check next derivation by clicking "Derive Next" button.<br>
+The tree will be shown in the screen below.<br>
+And there are templates to test below the screen.<br>
+To run the template, press copy button from one of the template and click "Gen From LSystem".<br>
+<br>
+<br>
+* Settings<br>
+"#" -> Comment, ex) #: comment example;<br>
+"root pos x" -> Pos x of root position of tree, ex) 0.0<br>
+"root pos y" -> Pos y of root position of tree, ex) 0.0<br>
+"root pos z" -> Pos z of root position of tree, ex) 0.0<br>
+"root orientation x" -> Orientation x of root of tree, ex) 90.0<br>
+"root orientation y" -> Orientation y of root of tree, ex) 0.0<br>
+"root orientation z" -> Orientation z of root of tree, ex) 0.0<br>
+"n" -> Number of derivation steps(set 0 while debug mode is enabled), ex) 3<br>
+"angle increment" -> Turtle's moving angle(in degree), ex) 45.0<br>
+"step amount" -> Tutrle's moving amount, ex) 10.0<br>
+"trunk radius" -> Radius of segment, ex) 0.3<br>
+"segment slice count" -> Number of circle resolution of segment, ex) 10<br>
+"segment stack count" -> Number of vertical resolution of segment, ex) 5<br>
+"debug mode enabled" -> if it is enabled, then the derivation proceeds in step, ex) true<br>
+"$constant1: value;" -> declare a constant variable, ex) $r_ratio: 0.7;<br>
+<br>
+<br>
+* Syntaxes<br>
+"F" or "F(param1)" or "F(param1, param2)" -> Move forward(-Z direction) by param1 or "step amount" with segment width as param1(overrides the current width) or current width<br>
+"+" or "+(param1)" -> Turn(while viewing towards -Z direction) left by "angle increment" or param1<br>	
+"-" or "-(param1)" -> Turn(while viewing towards -Z direction) right by "angle increment" or param1<br>
+"&" or "&(param1)" -> Pitch(while viewing towards -Z direction) down by "angle increment" or param1<br>
+"^" or "^(param1)" -> Pitch(while viewing towards -Z direction) up by "angle increment" or param1<br>
+"\" or "\(param1)" -> Roll(while viewing towards -Z direction) left by "angle increment" or param1<br>
+"/" or "/(param1)" -> Roll(while viewing towards -Z direction) right by "angle increment" or param1<br>
+"|" -> Turn(while viewing towards -Z direction) around by 180 deg<br>
+"$" -> Roll the turtle to make left of the turtle matches horizontal plane<br>
+"!(param1)" -> Set segment width to param1<br>
+</p>
+	<p>
+		<textarea id="text_area_l_system_input" rows="30" cols="80"></textarea>
+		<button type="button" onclick="btn_gen_from_l_system()">Gen From L System</button>
+		<button type="button" onclick="btn_derive_next()">Derive Next</button>
+	</p>
+	<p>
+	<button type="button" onclick="btn_cam_zoom_in()">Zoom In</button>
+	<button type="button" onclick="btn_cam_zoom_out()">Zoom Out</button>
+	</p>  
+	<p>
+	<button type="button" onclick="btn_cam_rotate_left()">Rotate Left</button>
+	<button type="button" onclick="btn_cam_rotate_right()">Rotate Right</button>
+	</p>
+	<canvas id="gl_canvas" width="1600" height="900"></canvas>
+	<script src="js/modules/c_buffer_lights.js"></script>
+	<script src="js/modules/c_buffer_phong_prop.js"></script>
+	<script src="js/modules/c_camera.js"></script>
+	<script src="js/modules/c_input_mgr.js"></script>
+	<script src="js/modules/c_light.js"></script>
+	<script src="js/modules/c_mat2.js"></script>
+	<script src="js/modules/c_mat3.js"></script>
+	<script src="js/modules/c_mat4.js"></script>
+	<script src="js/modules/c_material.js"></script>
+	<script src="js/modules/c_math.js"></script>
+	<script src="js/modules/c_model.js"></script>
+	<script src="js/modules/c_mesh_builder.js"></script>
+	<script src="js/modules/c_mesh.js"></script>
+	<script src="js/modules/c_object.js"></script>
+	<script src="js/modules/c_program_debug_check_ub.js"></script>
+	<script src="js/modules/c_program_debug_check_vao.js"></script>
+	<script src="js/modules/c_program_debug_normal_line.js"></script>
+	<script src="js/modules/c_program_phong.js"></script>
+	<script src="js/modules/c_scene.js"></script>
+	<script src="js/modules/c_shader_mgr.js"></script>
+	<script src="js/modules/c_plant_tree_edge.js"></script>
+	<script src="js/modules/c_plant_tree_node.js"></script>
+	<script src="js/modules/c_plant_tree.js"></script>
+	<script src="js/modules/c_player.js"></script>
+	<script src="js/modules/c_uniform_buffer_config.js"></script>
+	<script src="js/modules/c_vec2.js"></script>
+	<script src="js/modules/c_vec3.js"></script>
+	<script src="./js/main.js"></script>
+<p>
+<p>prev template</p>
+<textarea id="text_area_test_0" rows="30" cols="80">
+root pos x: 50.0;
+root pos y: 0.0;
+root pos z: 50.0;
+root orientation deg x: 90.0;
+root orientation deg y: 0.0;
+root orientation deg z: 0.0;
+n: 5;
+angle increment: 22.5;
+step amount: 1.0;
+trunk radius: 0.3;
+segment slice count: 10;
+segment stack count: 5;
+debug mode enabled: true;
+w: X;
+X: F-[[X]+X]+F[+FX]-X;
+F: FF;
+</textarea>
+<button type="button"
+		value="text_area_test_0"
+		onclick="btn_copy_template_to_edit_area(this.value)">Copy</button>
+<p>basic branching</p>
+<textarea id="text_area_test_1" rows="30" cols="80">
+root pos x: 50.0;
+root pos y: 0.0;
+root pos z: 50.0;
+root orientation deg x: 90.0;
+root orientation deg y: 0.0;
+root orientation deg z: 0.0;
+n: 5;
+angle increment: 22.5;
+step amount: 1.0;
+trunk radius: 0.3;
+segment slice count: 10;
+segment stack count: 5;
+debug mode enabled: true;
+
+w: X;
+X: F[-X][+X];
+</textarea>
+<button type="button"
+		value="text_area_test_1"
+		onclick="btn_copy_template_to_edit_area(this.value)">Copy</button>
+</p>
+<p>basic branching with doubling length</p>
+<textarea id="text_area_test_2" rows="30" cols="80">
+root pos x: 50.0;
+root pos y: 0.0;
+root pos z: 50.0;
+root orientation deg x: 90.0;
+root orientation deg y: 0.0;
+root orientation deg z: 0.0;
+n: 5;
+angle increment: 22.5;
+step amount: 1.0;
+trunk radius: 0.3;
+segment slice count: 10;
+segment stack count: 5;
+debug mode enabled: true;
+
+w: X;
+F: FF;
+X: F[-X][+X];
+</textarea>
+<button type="button"
+		value="text_area_test_2"
+		onclick="btn_copy_template_to_edit_area(this.value)">Copy</button>
+</p>
+<p>3d test</p>
+<textarea id="text_area_test_3" rows="30" cols="80">
+root pos x: 50.0;
+root pos y: 0.0;
+root pos z: 50.0;
+root orientation deg x: 90.0;
+root orientation deg y: 0.0;
+root orientation deg z: 0.0;
+n: 5;
+angle increment: 22.5;
+step amount: 1.0;
+trunk radius: 0.3;
+segment slice count: 10;
+segment stack count: 5;
+debug mode enabled: true;
+
+#: https://www.sidefx.com/docs/houdini/nodes/sop/lsystem.html;
+w: A;
+F: FF;
+A: [&FFFA]////[&FFFA]////[&FFFA];
+</textarea>
+<button type="button"
+		value="text_area_test_3"
+		onclick="btn_copy_template_to_edit_area(this.value)">Copy</button>
+</p>
+<p>Basic param test</p>
+<textarea id="text_area_test_4" rows="30" cols="80">
+root pos x: 50.0;
+root pos y: 0.0;
+root pos z: 50.0;
+root orientation deg x: 90.0;
+root orientation deg y: 0.0;
+root orientation deg z: 0.0;
+n: 5;
+angle increment: 22.5;
+step amount: 0.5;
+trunk radius: 0.3;
+segment slice count: 10;
+segment stack count: 5;
+debug mode enabled: true;
+
+$r_ratio: 0.6;
+
+w: A(0.5);
+F: FF;
+A(w): !(w)F[-A( w * 0.5 )][+A( w * r_ratio )];
+</textarea>
+<button type="button"
+		value="text_area_test_4"
+		onclick="btn_copy_template_to_edit_area(this.value)">Copy</button>
+</p>
+<p>Basic param test 2</p>
+<textarea id="text_area_test_5" rows="30" cols="80">
+root pos x: 50.0;
+root pos y: 0.0;
+root pos z: 50.0;
+root orientation deg x: 90.0;
+root orientation deg y: 0.0;
+root orientation deg z: 0.0;
+n: 5;
+angle increment: 22.5;
+step amount: 0.5;
+trunk radius: 0.3;
+segment slice count: 10;
+segment stack count: 5;
+debug mode enabled: true;
+
+$r_ratio: 0.7;
+$l_ratio: 0.1;
+
+w: A(10, 1);
+F: FF;
+A(l, w): !(w)F(l)[-A( l, w * 0.5 )][+A( l, w * r_ratio )];
+</textarea>
+<button type="button"
+		value="text_area_test_5"
+		onclick="btn_copy_template_to_edit_area(this.value)">Copy</button>
+</p>
+<p>Param example 1</p>
+<textarea id="text_area_test_6" rows="30" cols="80">
+root pos x: 50.0;
+root pos y: 0.0;
+root pos z: 50.0;
+root orientation deg x: 90.0;
+root orientation deg y: 0.0;
+root orientation deg z: 0.0;
+n: 10;
+angle increment: 22.5;
+step amount: 1.0;
+trunk radius: 0.3;
+segment slice count: 10;
+segment stack count: 5;
+debug mode enabled: true;
+
+$r1: 0.9;
+# contraction ratio 1;
+$r2: 0.7;
+# contraction ratio 2;
+$a1: 10;
+# branching angle 1;
+$a2: 60;
+# branching angle 2;
+$wr: 0.707;
+# width decrease rate;
+
+w: A(5,0.3);
+A(l,w): !(w)F(l)[&(a1)B(l * r1, w * wr)]/(180)[&(a2)B(l * r2, w * wr)];
+B(l,w): !(w)F(l)[+(a1)$B(l * r1, w * wr)][-(a2)$B(l * r2, w * wr)];	
+</textarea>
+<button type="button"
+		value="text_area_test_6"
+		onclick="btn_copy_template_to_edit_area(this.value)">Copy</button>
+</p>
+<p>Param example 2</p>
+<textarea id="text_area_test_7" rows="30" cols="80">
+root pos x: 50.0;
+root pos y: 0.0;
+root pos z: 50.0;
+root orientation deg x: 90.0;
+root orientation deg y: 0.0;
+root orientation deg z: 0.0;
+n: 5;
+angle increment: 22.5;
+step amount: 1.0;
+trunk radius: 0.3;
+segment slice count: 10;
+segment stack count: 5;
+debug mode enabled: true;
+
+# from abop figure 2.8
+# divergence angle 1;
+$d1: 94.74;
+# divergence angle 2;
+$d2: 132.63;
+# branching angle;
+$a: 18.95;
+# elongation rate;
+$lr: 1.109;
+# width increase rate(1/sqrt(3));
+$vr: 1.732;
+
+w: !(1)F(4)/(45)A;
+A: !(vr)F(1)[&(a)F(1)A]/(d1)[&(a)F(1)A]/(d2)[&(a)F(1)A];
+F(l): F(l * lr);
+!(w): !(w * vr);
+</textarea>
+<button type="button"
+		value="text_area_test_7"
+		onclick="btn_copy_template_to_edit_area(this.value)">Copy</button>
+</p>
+<p>Param example 3</p>
+<textarea id="text_area_test_8" rows="30" cols="80">
+root pos x: 50.0;
+root pos y: 0.0;
+root pos z: 50.0;
+root orientation deg x: 90.0;
+root orientation deg y: 0.0;
+root orientation deg z: 0.0;
+n: 5;
+angle increment: 22.5;
+step amount: 1.0;
+trunk radius: 0.3;
+segment slice count: 10;
+segment stack count: 5;
+debug mode enabled: true;
+
+# modified from abop figure 2.8
+# divergence angle 1;
+$d1: 94.74;
+# divergence angle 2;
+$d2: 132.63;
+# branching angle;
+$a: 18.95;
+# elongation rate;
+$lr: 1.109;
+# width increase rate(1/sqrt(3));
+$vr: 0.577;
+
+w: !(1)F(4)/(45)A;
+A: !(vr)F(1)[&(a)F(1)A]/(d1)[&(a)F(1)A]/(d2)[&(a)F(1)A];
+F(l): F(l * lr);
+</textarea>
+<button type="button"
+		value="text_area_test_8"
+		onclick="btn_copy_template_to_edit_area(this.value)">Copy</button>
+</p>
+<p>Param example 4</p>
+<textarea id="text_area_test_9" rows="30" cols="80">
+root pos x: 50.0;
+root pos y: 0.0;
+root pos z: 50.0;
+root orientation deg x: 90.0;
+root orientation deg y: 0.0;
+root orientation deg z: 0.0;
+n: 10;
+angle increment: 22.5;
+step amount: 3.5;
+trunk radius: 0.3;
+segment slice count: 10;
+segment stack count: 5;
+debug mode enabled: true;
+
+# from https://docs.racket-lang.org/lindenmayer/Parameteric_L-systems.html;
+$r: 0.9;
+$s: 0.6;
+$a: 45;
+$b: 45;
+$d: 136.75;
+$y: 0.707;
+$shift: -3.2;
+
+w: A(5, 0.5);
+A(l,w): !(w)F(l)[&(a)B(l * s, w * y)]/(d)A(l * r, w * y);
+B(l,w): !(w)F(l)[-(b)$C(l * s, w * y)]C(l * r, w * y);
+C(l,w): !(w)F(l)[+(b)$B(l * s, w * y)]B(l * r, w * y);
+</textarea>
+<button type="button"
+		value="text_area_test_9"
+		onclick="btn_copy_template_to_edit_area(this.value)">Copy</button>
+</p>
+<p>Tropism test</p>
+<textarea id="text_area_test_9" rows="30" cols="80">
+root pos x: 50.0;
+root pos y: 0.0;
+root pos z: 50.0;
+root orientation deg x: 90.0;
+root orientation deg y: 0.0;
+root orientation deg z: 0.0;
+n: 10;
+angle increment: 22.5;
+step amount: 3.5;
+trunk radius: 0.3;
+segment slice count: 10;
+segment stack count: 5;
+tropism vector x: 0.0;
+tropism vector y: 0.0;
+tropism vector z: 0.0;
+bending susceptibility: 0.0;
+debug mode enabled: true;
+
+# from https://docs.racket-lang.org/lindenmayer/Parameteric_L-systems.html;
+$r: 0.9;
+$s: 0.6;
+$a: 45;
+$b: 45;
+$d: 136.75;
+$y: 0.707;
+$shift: -3.2;
+
+w: A(5, 0.5);
+A(l,w): !(w)F(l)[&(a)B(l * s, w * y)]/(d)A(l * r, w * y);
+B(l,w): !(w)F(l)[-(b)$C(l * s, w * y)]C(l * r, w * y);
+C(l,w): !(w)F(l)[+(b)$B(l * s, w * y)]B(l * r, w * y);
+</textarea>
+<button type="button"
+		value="text_area_test_9"
+		onclick="btn_copy_template_to_edit_area(this.value)">Copy</button>
+</p>
+  </body>
+</html>
